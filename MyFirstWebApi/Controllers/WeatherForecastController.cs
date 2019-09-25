@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace MyFirstWebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private readonly ILogger<WeatherForecastController> logger;
@@ -21,6 +21,15 @@ namespace MyFirstWebApi.Controllers
         {
             this.logger = logger;
             this.cache = cache;
+
+            var weatherForecast = new WeatherForecast
+            {
+                Date = DateTime.UtcNow,
+                TemperatureC = 0,
+                Summary = "COLD!"
+            };
+
+            cache.Set<WeatherForecast>("weatherToday", weatherForecast);
         }
 
         [HttpGet]
