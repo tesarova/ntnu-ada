@@ -5,6 +5,33 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>@Model.Message</p>
+</div>
+
+<div class="col-auto">
+    <div class="row-lg-1">
+        <form method="get">
+            <button class="btn btn-default">Reset</button>
+        </form>
+    </div>
+    <div class="row-lg-1">
+        <form asp-page-handler="click" method="post">
+            <button class="btn btn-default">My Click</button>
+        </form>
+    </div>
+    <div class="row-lg-1">
+        <form asp-page-handler="delete" method="post">
+            <button class="btn btn-default">Delete</button>
+        </form>
+    </div>
+    <div class="row-lg-1">
+        <form asp-page-handler="edit" method="post">
+            <div class="input-group">
+                <input class="form-control" name="newMessage" />
+                <span class="input-group-btn">
+                    <button class="btn btn-danger" type="submit">Edit</button>
+                </span>
+            </div>
+        </form>
+    </div>
 </div>
