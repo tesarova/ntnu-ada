@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace MyFirstWebApi.Controllers
@@ -11,29 +13,33 @@ namespace MyFirstWebApi.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly ILogger<WeatherForecastController> logger;
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private IMemoryCache cache;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IMemoryCache cache)
         {
-            _logger = logger;
+            this.logger = logger;
+            this.cache = cache;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public WeatherForecast Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            return cache.Get<WeatherForecast>("weatherToday");
+        }
+
+        [HttpPost]
+        public void Post(int temperature, string summary)
+        {
+            var weatherForecast = new WeatherForecast
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+                Date = DateTime.UtcNow,
+                TemperatureC = temperature,
+                Summary = summary
+            };
+
+            cache.Set<WeatherForecast>("weatherToday", weatherForecast);
         }
     }
 }
